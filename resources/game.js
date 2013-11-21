@@ -1,5 +1,6 @@
 var canvas = CE.defines("game").
     extend(Input).
+    extend(Scrolling).
     extend(Tiled).
     ready(function() { 
     canvas.Scene.call("MyScene");
@@ -17,12 +18,24 @@ canvas.Scene.new({
         
     },
     ready: function(stage){
-        var player = this.createElement();
-        player.drawImage("grasstile");
-        player.x = 70;
-        player.y = 200;
+        var player = this.player = this.createElement();
+        this.player.drawImage("grasstile");
+        this.player.x = 70;
+        this.player.y = 200;
+        
+        this.scrolling = canvas.Scrolling.new(this, 64, 64);
         
         var map = this.createElement();
+        
+        this.scrolling.setMainElement(player);
+        
+        this.scrolling.addScroll({
+            element: map,
+            speed: 1,
+            block: false,
+            width: 1600,
+            height: 1600
+        });
         
         tiled = canvas.Tiled.new();
         tiled.load(this, map, "resources/debugmap.json");
@@ -45,10 +58,8 @@ canvas.Scene.new({
         
     },
     render: function(stage){
-        
-        
-        stage.refresh();
-        
+        this.scrolling.update();
+        stage.refresh(); 
     },
     exit: function(stage){
         
