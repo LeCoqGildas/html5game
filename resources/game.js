@@ -18,44 +18,43 @@ canvas.Scene.new({
         
     },
     ready: function(stage){
-        var player = this.player = this.createElement();
-        this.player.drawImage("grasstile");
-        this.player.x = 70;
-        this.player.y = 200;
+        var self = this;
         
-        this.scrolling = canvas.Scrolling.new(this, 64, 64);
-        
-        var map = this.createElement();
-        
-        this.scrolling.setMainElement(player);
-        
-        this.scrolling.addScroll({
-            element: map,
-            speed: 1,
-            block: false,
-            width: 1600,
-            height: 1600
-        });
-        
+        //var map = this.createElement();
         tiled = canvas.Tiled.new();
-        tiled.load(this, map, "resources/debugmap.json");
+        tiled.load(this, stage, "resources/debugmap.json");
+
         tiled.ready(function() {
             var tileW = this.getTileWidth(),
-                    tileH = this.getTileHeight(),
-                    layerObj = this.getLayerObject();
-                    
-            map.append(player);
+                tileH = this.getTileHeight(),
+                layerObj = this.getLayerObject();
+
+            self.player = self.createElement();
+            self.player.drawImage("grasstile");
+            self.player.x = 70;
+            self.player.y = 200;
+            stage.append(self.player);
+
+            self.scrolling = canvas.Scrolling.new(self, tileW, tileH);
+            self.scrolling.setMainElement(self.player);     
+
+
+            var map = self.scrolling.addScroll({
+                element: this.getMap(),
+                speed: 1,
+                block: true,
+                width: this.getWidthPixel(),
+                height: this.getHeightPixel(),
+            });
+            self.scrolling.setScreen(map);
+
+            canvas.Input.keyDown(Input.Left, function() {
+                self.player.x -= 10;
+            });
+            canvas.Input.keyDown(Input.Right, function() {
+                self.player.x += 10;
+            }); 
         });
-        
-        canvas.Input.keyDown(Input.Left, function() {
-            player.x -= 10;
-        });
-        canvas.Input.keyDown(Input.Right, function() {
-            player.x += 10;
-        }); 
-    
-        stage.append(map);
-        
     },
     render: function(stage){
         this.scrolling.update();

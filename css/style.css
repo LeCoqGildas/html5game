@@ -1,0 +1,11 @@
+body{
+	background-color:#AAAAAA;
+
+}
+
+#game {
+	display:block;
+	margin: 0 auto;
+    border: 4px solid black;
+	background-color:black;
+}
